@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use std::fs::{create_dir, read_dir, write, File};
 use std::io::{stdin, BufRead, BufReader};
-use std::collections::{HashMap};
 use std::iter::Iterator;
 
 fn main() {
@@ -46,43 +46,58 @@ fn filter_email_folder(input_folder_path: String, output_folder_path: String) {
 fn filter_email_file(input_folder_path: &str, output_folder_path: &str, file_name: String) {
     let file = File::open(format!("{}/{}", input_folder_path, &file_name)).unwrap();
     let reader = BufReader::new(&file);
-    let second_reader = BufReader::new(&file);
 
-    let mut filtered_emails: Vec<String> = Vec::new();
-
-    let mut valid_domains: HashMap<String, String>  = HashMap::new();
-
+    let mut filtered_emails: HashMap<String, String> = HashMap::new();
+    let mut valid_domains: HashMap<String, String> = HashMap::new();
+    let mut mapped_systems: HashMap<String, String> = HashMap::new();
 
     for line_or in reader.lines() {
         let line_items: Vec<String> = line_or.unwrap().split(",").map(str::to_string).collect();
 
-        //println!("{}", line_items[0]);
         let email: String = format!("{}", line_items[0]);
         let company: String = format!("{}", line_items[1]);
         let system: String = format!("{}", line_items[2]);
 
-
         if !email.contains("@byetm") && !email.contains("@sovos") {
-            let correct_domain = format!("@{}", email.split("@").last().unwrap()); 
-            valid_domains.insert(company, correct_domain.to_string());
-        }
-        
-    }
-
-
-    for line_or in second_reader.lines() {
-        println!("second tab");
-        let line: String = line_or.unwrap();
-        let email: &str = line.split(",").next().unwrap();
-        println!("{}", line);
-        if email.contains("@byetm") || email.contains("@sovos") {
-            filtered_emails.push(line);
+            let correct_domain = format!("@{}", email.split("@").last().unwrap());
+            valid_domains.insert(company.clone(), correct_domain.to_string());
+            mapped_systems.insert(company, system);
+        } else if email.contains("@byetm") || email.contains("@sovos") {
+            filtered_emails.insert(email, company);
         }
     }
-    println!("{:?}", filtered_emails);
+
+    write_new_file(
+        filtered_emails,
+        valid_domains,
+        mapped_systems,
+        output_folder_path,
+        file_name,
+    )
+}
+
+fn write_new_file(
+    filtered_emails: HashMap<String, String>,
+    valid_domains: HashMap<String, String>,
+    mapped_systems: HashMap<String, String>,
+    output_folder_path: &str,
+    file_name: String,
+) {
+    let mut final_filtered_data: Vec<String> = Vec::new();
+    for (email, company) in &filtered_emails {
+        let system = mapped_systems.get(company).unwrap();
+        let correct_domain = valid_domains.get(company).unwrap();
+        let corrected_email = format!(
+            "{}{}",
+            email.split("@").next().unwrap(),
+            correct_domain.to_string()
+        );
+        let final_line_data = format!("{},{},{}", email, system, corrected_email);
+        final_filtered_data.push(final_line_data);
+    }
     write(
         format!("{}/{}{}", output_folder_path, "filtered_", file_name),
-        filtered_emails.join("\r\n"),
+        final_filtered_data.join("\r\n"),
     )
     .unwrap();
 }
