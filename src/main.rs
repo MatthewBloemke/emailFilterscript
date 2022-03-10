@@ -53,18 +53,22 @@ fn filter_email_file(input_folder_path: &str, output_folder_path: &str, file_nam
 
     for line_or in reader.lines() {
         let line_items: Vec<String> = line_or.unwrap().split(",").map(str::to_string).collect();
-
-        let email: String = format!("{}", line_items[0]);
-        let company: String = format!("{}", line_items[1]);
-        let system: String = format!("{}", line_items[2]);
-
-        if !email.contains("@byetm") && !email.contains("@sovos") {
-            let correct_domain = format!("@{}", email.split("@").last().unwrap());
-            valid_domains.insert(company.clone(), correct_domain.to_string());
-            mapped_systems.insert(company, system);
-        } else if email.contains("@byetm") || email.contains("@sovos") {
-            filtered_emails.insert(email, company);
+        if line_items.len() > 1 {
+            let email: String = format!("{}", line_items[0]);
+            let company: String = format!("{}", line_items[1]);
+            let system: String = format!("{}", line_items[2]);
+            
+            if !email.contains("@byetm") && !email.contains("@sovos") {
+                let correct_domain = format!("@{}", email.split("@").last().unwrap());
+                valid_domains.insert(company.clone(), correct_domain.to_string());
+                mapped_systems.insert(company, system);
+            } else if email.contains("@byetm") || email.contains("@sovos") {
+                filtered_emails.insert(email, company);
+            }            
         }
+
+
+
     }
 
     write_new_file(
