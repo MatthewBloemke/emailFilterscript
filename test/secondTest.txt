@@ -1,0 +1,8 @@
+email   Entity     ServerName
+josh@gmail.com,Company B,Wings02_System
+brick@gmail.com,Company B,Wings02_System
+james@byetm.com,Amazon,Wings03_System
+dingus@hotmail.com,Amazon,Wings03_System
+gmail@yahoo.com,Company D,Wings08_System
+wings-123@sovos.com,Company B,Wings02_System
+wingsit-123@sovos.com,Company D,Wings08_System

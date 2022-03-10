@@ -2,7 +2,8 @@ email   Entity     ServerName
 tvolk131@gmail.com,Company B,Wings02_System
 helloworld@gmail.com,Company B,Wings02_System
 mattbloemke@byetm.com,Amazon,Wings03_System
+email   Entity     ServerName
 dingus@hotmail.com,Amazon,Wings03_System
 email@yahoo.com,Company D,Wings08_System
-wings-abc@sovos.com,Company B,Wings02_System
-wingsit-abc@sovos.com,Company D,Wings08_System
+wings-abc@Sovos.com,Company B,Wings02_System
+wingsit-abc@Sovos.com,Company D,Wings08_System
